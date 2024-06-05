@@ -1,0 +1,122 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+//Класс строитель - Строитель даёт возможность использовать 
+//один и тот же код строительства для получения разных представлений объектов.
+
+
+class Car {
+public:
+    int wheels;
+    string color;
+    string engine;
+    int seats;
+    bool gps;
+
+    void show() {
+        cout << "Wheels counter:" << wheels << endl;
+        cout << "Color: " << color << endl;
+        cout << "Type of engine: " << engine << endl;
+        cout << "Seats counter:" << seats << endl;
+        if (gps) {
+            cout<<"Have GPS" << endl;
+        }
+        else {
+            cout<<"Don't have GPS" << endl;
+        }
+    }
+};
+
+class CarBuilder {
+private:
+    Car* result;
+public:
+    CarBuilder() {}
+    
+    ~CarBuilder() {
+        delete result;
+    }
+    
+    CarBuilder& reset() {
+        this->result = new Car();
+        return *this;
+    }
+
+    CarBuilder& setWheels(int count) {
+        this->result->wheels = count;
+        return *this;
+    }
+
+    CarBuilder& setColor(string color) {
+        this->result->color = color;
+        return *this;
+    }
+
+    CarBuilder& setEngine(string engine) {
+        this->result->engine=engine ;
+        return *this;
+    }
+
+    CarBuilder& setSeats(int count) {
+        this->result->seats = count ;
+        return *this;
+    }
+
+    CarBuilder& setGPS(bool gps) {
+        this->result-> gps = gps;
+        return *this;
+    }
+
+    Car* getResult() {
+        return this->result;
+    }
+
+};
+
+class Director {//Директор рукводит процессом сборки класса CarBuilder. С помощью директора можно делать типо пресеты
+private:
+    CarBuilder b1;
+public:
+    Director(){}
+
+    Car* buildSportCar() {
+        cout << "Building Sport car" << endl;
+        b1.reset();
+        b1.setSeats(2);
+        b1.setEngine("V6");
+        b1.setWheels(4);
+        b1.setGPS(true);
+        return b1.getResult();
+    }
+
+    Car* buildMuscleCar() {
+        cout << "Building Muscle car" << endl;
+        b1.reset();
+        b1.setSeats(4);
+        b1.setEngine("V8");
+        b1.setWheels(4);
+        b1.setGPS(true);
+        return b1.getResult();
+    }
+
+    Car* buildSedanCar() {
+        cout << "Building Sedan car" << endl;
+        b1.reset();
+        b1.setSeats(4);
+        b1.setEngine("V4");
+        b1.setWheels(4);
+        b1.setGPS(false);
+        return b1.getResult();
+    }
+
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    CarBuilder carBuilder;
+    Director d1;
+    d1.buildSportCar()->show();
+}
