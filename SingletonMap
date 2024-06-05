@@ -1,0 +1,54 @@
+#include <iostream>
+#include <string>
+#include <map>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+//Singleton - класс, который создает только один экземпля
+
+class ConfigManager  {
+private:
+    static ConfigManager* singleton;
+    map <string,string> map1;
+    string name;
+    ConfigManager (string newName) {
+        name = newName;
+    }
+public:
+    static ConfigManager*  getInstance(string newName) {
+        if (singleton == nullptr) {
+            singleton = new ConfigManager(newName);
+        }
+        return singleton;
+    }
+
+    void setParameter(string key, string value) {
+        map1[key] = value;
+    }
+
+    string getParameter(string key) {
+        return map1[key];
+    }
+
+    string getName() {
+        return name;
+    }
+};
+
+ConfigManager* ConfigManager::singleton = nullptr;
+//ConfigManager ::getInstance() {
+//    if (singleton == nullptr) {
+//        instance = new ConfigManager(elem);
+//    }
+//    return instance;
+//}
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    ConfigManager* p1=ConfigManager::getInstance("Map1");
+    ConfigManager* p2=ConfigManager::getInstance("M2");
+    cout<<p2->getName();
+    p1->setParameter("first", "bebra");
+    cout << p1->getParameter("first");
+    
+}   
