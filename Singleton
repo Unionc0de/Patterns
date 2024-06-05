@@ -1,0 +1,41 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+//Singleton - класс, который создает только один экземпля
+//template <typename T>
+class President  {
+private:
+    static President* singleton;
+    string name;
+    President (string newName) {
+        name = newName;
+    }
+public:
+    static President*  getInstance(string newName) {
+        if (singleton == nullptr) {
+            singleton = new President(newName);
+        }
+        return singleton;
+    }
+
+    string getName() {
+        return name;
+    }
+};
+
+President* President::singleton = nullptr;
+//President ::getInstance() {
+//    if (singleton == nullptr) {
+//        instance = new President(elem);
+//    }
+//    return instance;
+//}
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    President* p1=President::getInstance("Tomas");
+    cout<<p1->getName();
+    
+}   
