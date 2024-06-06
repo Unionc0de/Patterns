@@ -1,0 +1,98 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class Burger {
+public:
+    string cutlet;
+    string bun;
+    bool cucumber;
+    bool tomat;
+    bool mustard;
+    bool ketchup;
+    
+    void show() {
+        cout << "cutlet: " << cutlet << endl;
+        cout << "Bun: " << bun << endl;
+        cout << "Cucumber: " << cucumber << endl;
+        cout << "Tomat: " << tomat << endl;
+        cout << "Mustard: " << mustard << endl;
+        cout << "Ketchup: " << ketchup << endl;
+    }
+};
+
+class BurgerBuilder {
+private:
+    Burger* result;
+public:
+    BurgerBuilder(){}
+
+    ~BurgerBuilder() {
+        delete result;
+    }
+    BurgerBuilder& reset() {
+        this->result = new Burger();
+        return *this;
+    }
+    BurgerBuilder& setcutlet(string cutlet) {
+        this->result->cutlet = cutlet;
+    }
+
+    BurgerBuilder& setBun(string bun) {
+        this->result->bun = bun;
+    }
+
+    BurgerBuilder& setCucumber(bool count) {
+        this->result->cucumber = count;
+    }
+
+    BurgerBuilder& setTomat(bool count) {
+        this->result->tomat = count;
+    }
+
+    BurgerBuilder& setMustard(bool count) {
+        this->result->mustard = count;
+    }
+
+    Burger* getResult() {
+        return this->result;
+    }
+};
+
+class Director {
+private:
+    BurgerBuilder builder;
+public:
+    Burger* makeBigHit() {
+        builder.setcutlet("Beef");
+        builder.setBun("Sesame bun");
+        builder.setTomat(true);
+        builder.setMustard(true);
+        return builder.getResult();
+    }
+
+    Burger* makeVeganBurger() {
+        builder.setcutlet("Nothing");
+        builder.setBun("Default bun");
+        builder.setTomat(true);
+        builder.setMustard(true);
+        builder.setCucumber(true);
+        return builder.getResult();
+    }
+
+    Burger* makeChikenBurger() {
+        builder.setcutlet("Chicken cutlet");
+        builder.setBun("Default bun");
+        builder.setTomat(false);
+        builder.setMustard(false);
+        builder.setCucumber(true);
+        return builder.getResult();
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+}
