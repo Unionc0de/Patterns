@@ -1,0 +1,80 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+//Паттерн фабричный метод. Используется для создание объектов класса-родитель и изменять эти объекты с помощью подклассов 
+class Sword {//Класс, от которого наследуются остальные объекты 
+public:
+    virtual void attack() = 0;
+    virtual ~Sword() = default;//Диструктор по умолчанию который удаляет все
+};
+
+class Katana : public Sword {
+public:
+    void attack() override {
+        cout << "Attack by Katana" << endl;
+    }
+};
+
+class BroadSword : public Sword {
+public:
+    void attack() override {
+        cout << "Attack by BroadSword" << endl;
+    }
+};
+
+class UlfbertSword : public Sword {
+public:
+    void attack() override {
+        cout << "Attack by UlfbertSword" << endl;
+    }
+};
+
+class BlackSmith{
+public:
+    virtual Sword* createSword() = 0;
+    virtual ~BlackSmith() = default;
+};
+
+class JapaneseBlackSmith:public BlackSmith {
+public:
+    Sword* createSword() {
+        return new Katana();
+    }
+};
+
+class EuropeBlackSmith:public BlackSmith {
+public:
+    Sword* createSword() {
+        return new BroadSword();
+    }
+};
+
+class VikingBlackSmith :public BlackSmith {
+public:
+    Sword* createSword() {
+        return new UlfbertSword();
+    }
+};
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    BlackSmith* someBlackSmith = nullptr;
+    string country = "Europe";
+    if (country == "Japan")
+    {
+        someBlackSmith = new JapaneseBlackSmith();
+    }
+
+    else if (country == "Europe")
+    {
+        someBlackSmith = new EuropeBlackSmith();
+    }
+
+    if (someBlackSmith != nullptr) {
+        Sword* someSword = someBlackSmith->createSword();
+        someSword->attack();
+    }
+}
