@@ -1,0 +1,158 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class Sword {
+public:
+    virtual void swinging() = 0;
+    virtual ~Sword() = default;
+};
+
+class Sax:public Sword {
+public:
+    void swinging() {
+        cout << "Hit by Sax " << endl;
+    }
+};
+
+class Katana :public Sword {
+public:
+    void swinging() {
+        cout << "Hit by Katana " << endl;
+    }
+};
+
+class BroadSword :public Sword {
+public:
+    void swinging() {
+        cout << "Hit by Broad Sword " << endl;
+    }
+};
+
+class Axe {
+public:
+    virtual void hitting() = 0;
+    virtual ~Axe() = default;
+};
+
+class DaneAxe :public Axe {
+public:
+    void hitting() {
+        cout << "Hit by DaneAxe " << endl;
+    }
+};
+
+class Masacari :public Axe {
+public:
+    void hitting() {
+        cout << "Hit by Masacari " << endl;
+    }
+};
+
+class Poleax :public Axe {
+public:
+    void hitting() {
+        cout << "Hit by Poleax " << endl;
+    }
+};
+
+class Spear {
+public:
+    virtual void thrusting() = 0;
+    virtual ~Spear() = default;
+};
+
+class Gungnir :public Spear {
+public:
+    void thrusting() {
+        cout << "Hit by Gungnir " << endl;
+    }
+};
+
+class Yari: public Spear {
+public:
+    void thrusting() {
+        cout << "Hit by Yari " << endl;
+    }
+};
+
+class Pilum:public Spear {
+public:
+    void thrusting() {
+        cout << "Hit by Pilum " << endl;
+    }
+};
+
+class Blacksmith {
+public:
+    virtual Sword *createSword() = 0;
+    virtual Axe* createAxe() = 0;
+    virtual Spear* createSpear() = 0;
+    virtual ~Blacksmith() = default;
+};
+
+class JapanBlacksmith:public Blacksmith {
+public:
+    Sword* createSword() {
+        return new Katana();
+    }
+
+    Axe* createAxe() {
+        return new Masacari();
+    }
+
+    Spear* createSpear() {
+        return new Yari();
+    }
+};
+
+class ScandinavianBlacksmith :public Blacksmith {
+public:
+    Sword* createSword() {
+        return new Sax();
+    }
+
+    Axe* createAxe() {
+        return new DaneAxe();
+    }
+
+    Spear* createSpear() {
+        return new Gungnir();
+    }
+};
+
+class EuropeBlacksmith :public Blacksmith {
+public:
+    Sword* createSword() {
+        return new BroadSword();
+    }
+
+    Axe* createAxe() {
+        return new Poleax();
+    }
+
+    Spear* createSpear() {
+        return new Pilum();
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    Blacksmith* JapanBS = new JapanBlacksmith();
+    JapanBS->createAxe()->hitting();
+    JapanBS->createSword()->swinging();
+    JapanBS->createSpear()->thrusting();
+
+    Blacksmith* EuropeBS = new EuropeBlacksmith();
+    EuropeBS->createAxe()->hitting();
+    EuropeBS->createSword()->swinging();
+    EuropeBS->createSpear()->thrusting();
+
+    Blacksmith* ScandinavianBS = new ScandinavianBlacksmith();
+    ScandinavianBS->createAxe()->hitting();
+    ScandinavianBS->createSword()->swinging();
+    ScandinavianBS->createSpear()->thrusting();
+}
