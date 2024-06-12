@@ -1,0 +1,131 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class ServiceInterface {
+protected:
+    virtual vector<string> downloadVideo() = 0;
+    virtual string downloadVideoByID(int id) = 0;
+};
+
+class Service:public ServiceInterface {
+private:
+    string path;
+public:
+
+    Service(string path):path(path){}
+
+    vector <string> downloadVideo() {
+        vector <string> newData;
+        int size;
+        string str;
+        ifstream in(this->path);
+
+        if (in.is_open()) {
+            getline(in, str);
+            while (getline(in, str)) {
+                newData.push_back(str);
+            }
+            return newData;
+        }
+
+        else {
+            cout << "File not found!" << endl;
+        }
+    }
+
+    /*string downloadVideoByID(int id) {
+        string str;
+        ifstream in(this->path);
+
+        if (in.is_open()) {
+            int counter = 0;
+            while (getline(in, str)) {
+                counter++;
+                if (counter == id) {
+                    getline(in, str);
+                    return str;
+                }
+            };
+        }
+
+        else {
+            cout << "File not found!" << endl;
+        }
+    }*/
+
+    string downloadVideoByID(int id) {
+        string str;
+        ifstream in(this->path);
+
+        if (in.is_open()) {
+            int index = 0;
+            while (getline(in, str)) {
+                string newLine = str.substr(0, str.find_first_of('.'));
+                if (stoi(newLine) == id) {
+                    return str;
+                }
+            };
+        }
+
+        else {
+            cout << "File not found!" << endl;
+        }
+    }
+
+    string getDate() {
+        string str;
+        ifstream in(this->path);
+        
+        if (in.is_open()) {
+            getline(in, str);
+            return str;
+
+        }
+
+        else {
+            cout << "File not found!" << endl;
+        }
+    }
+};
+
+class Proxy :public ServiceInterface {
+private:
+    Service* realService;
+    string date = realService->getDate();
+    vector<string>cache;//Вектор для проверки повторного запроса 
+    
+    bool checkAccess(int pass) {
+        return (pass == 12345);
+    }
+
+public:
+    Proxy(Service* service): realService(service){}
+
+    string downloadVideoByID(int id) {
+        
+
+
+        string result = realService->downloadVideoByID(id);
+        cache.push_back(result);
+        return result;
+    }
+
+        
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    
+    Service* test = new Service("video.txt");
+    vector <string> v1 = test->downloadVideo();
+    //for (auto el : v1) {
+    //    cout << el << endl;
+    //}
+    cout << test->downloadVideoByID(2);
+}
