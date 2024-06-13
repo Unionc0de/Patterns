@@ -1,0 +1,80 @@
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <sstream>//Библиотека для превращения строки в поток 
+#include <vector>   
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+//Паттерн Адаптер - позволяет конвертировать объекты для использования в другом классе
+
+class Car {
+private:
+    string category;
+    string color;
+    int seats;
+    int volume;
+public:
+    Car(string category, string color,int seats,int volume):category(category),color(color),seats(seats),volume(volume){}
+
+    void carInfo() {
+        cout << "Category: " << category <<endl;
+        cout << "Color: " << color << endl;
+        cout << "Seats: " << seats << endl;
+        cout << "Volume: " << volume << endl;
+        cout << endl;
+        cout << endl;
+    }
+};
+
+class CarAdapter {
+private:
+    Car *car;
+public:
+    CarAdapter(string newCar) {
+        vector <string> newString;//Вектор для новых подстрок 
+        stringstream flow(newCar);//Преващаем строку в поток 
+        string str;//Строка для записи 
+        while (getline(flow, str, ';')) {//Проходимся по потоку и записываем в вектор 
+            newString.push_back(str);
+        }
+        this->car = new Car(newString[0], newString[1], stoi(newString[2]), stoi(newString[3]));//Создаем машинку) 
+    }
+
+    Car* getCar() {
+        return this->car;
+    }
+    
+};
+
+class Parking {
+private:
+    vector<Car*> parking;
+public:
+
+    void addCar(Car* car) {
+        parking.push_back(car);
+    }
+
+    void showAll() {
+        
+        for (auto el : parking) {
+            el->carInfo();
+        }
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    CarAdapter adapter1("sedan;red;4;150");
+    Car* car1 =  adapter1.getCar();
+    Car* car2 = new Car("Hatchback", "yellow", 6, 399);
+
+    Parking* parking1 = new Parking();
+    parking1->addCar(car1);
+    parking1->addCar(car2);
+    parking1->showAll();
+
+}
