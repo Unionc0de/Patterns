@@ -1,0 +1,109 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+//Класс легковес - выносит повторяющийся поля в отдельный класс . 
+
+class TreeType {//Класс легковес  
+private:
+    string name;
+    string color;
+    string texture;
+public:
+    TreeType(string name, string color, string texture) :name(name), color(color), texture(texture){}
+
+    void draw(int x, int y) {
+        cout << "Draw " << name << " with color " 
+        << color << " and with texture "
+        << texture << " At X: " << x << " Y: " << y;
+        cout << endl;
+        cout << endl;
+    }
+
+    string getName() {
+        return this->name;
+    }
+
+    string getColor() {
+        return this->color;
+    }
+
+    string getTexture() {
+        return this->texture;
+    }
+};
+
+
+class TreeFactory {
+private:
+    static vector <TreeType*> treeTypes;
+
+    
+public:
+    static TreeType* getTreeType(string name, string color, string texture) {
+        for (int i = 0; i < treeTypes.size(); i++)
+        {
+            if (treeTypes[i]->getColor() == color
+                && treeTypes[i]->getName() == name
+                && treeTypes[i]->getTexture() == texture) {
+                cout << "Tree already exist!" << endl;
+
+                return treeTypes[i];
+            }
+        }
+        cout << "Add new Tree!" << endl;
+        TreeType* newTree = new TreeType(name, color, texture);
+        treeTypes.push_back(newTree);
+        return newTree;
+    }
+};
+
+class Tree {
+private:
+    int x;
+    int y;
+    TreeType* type;
+public:
+    Tree(int x, int y, TreeType* type) :x(x), y(y), type(type){}
+
+    void draw() {
+        type->draw(this->x,this->y);
+    }
+};
+
+class Forest {
+private:
+    vector<Tree> treeCollection;
+public:
+    void plantTree(int x, int y, string name, string color, string texture) {
+        TreeType* type = TreeFactory::getTreeType(name, color, texture);
+        Tree tree(x, y, type);
+        treeCollection.push_back(tree);
+    }
+
+    void draw() {
+        for (auto el : treeCollection) {
+            el.draw();
+        }
+    }
+
+};
+
+
+vector <TreeType*> TreeFactory::treeTypes;
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    Forest forest;
+    forest.plantTree(10, 20, "Bereza", "Orange", "Texture of Bereza");
+    forest.plantTree(45, 10, "Mudri dub", "Green", "Mudri dub");
+    forest.plantTree(10, 20, "Bubunya", "Red", "Texture of Bubunya");
+    forest.plantTree(10, 20, "Eylka", "Grenn", "Texture of Eylka");
+    forest.draw();
+
+}
