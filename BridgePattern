@@ -1,0 +1,155 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class Device {
+public:
+    virtual bool isEnable() = 0;
+    virtual void enable() = 0;
+    virtual void disable() = 0;
+    virtual int getVolume() = 0;
+    virtual void setVolume(int percent) = 0;
+    virtual int getChannel() = 0;
+    virtual void setChannel(int newChannel) = 0;
+};
+
+class Radio:public Device {
+private:
+    int channel=0;
+    int volume=0;
+    bool enabled = false;
+public:
+    bool isEnable() {
+        return this->enabled;
+    }
+
+    void enable() {
+        this->enabled = true;
+        cout << "Radio is on!" << endl;
+    }
+
+    void disable() {
+        this->enabled = false;
+        cout << "Radio is off" << endl;
+    }
+
+    int getVolume() {
+        return this->volume;
+    }
+
+    void setVolume(int percent) {
+        this->volume = percent;
+    }
+
+    int getChannel() {
+        return this->channel;
+    }
+
+    void setChannel (int percent) {
+        this->channel = percent;
+    }
+
+};
+
+class TV :public Device {
+private:
+    int channel = 0;
+    int volume = 0 ;
+    bool enabled = false;
+public:
+    bool isEnable() {
+        return this->enabled;
+    }
+
+    void enable() {
+        this->enabled = true;
+        cout << "TV is on!" << endl;
+    }
+
+    void disable() {
+        this->enabled = false;
+        cout << "TV is off" << endl;
+    }
+
+    int getVolume() {
+        return this->volume;
+    }
+
+    void setVolume(int percent) {
+        this->volume = percent;
+    }
+
+    int getChannel() {
+        return this->channel;
+    }
+
+    void setChannel(int percent) {
+        this->channel = percent;
+    }
+
+};
+
+class RemoteController {
+protected:
+    Device* device;
+public:
+    RemoteController(){}
+    
+    RemoteController(Device* newDevice):device(newDevice){}
+    
+    void togglePower() {
+        if (device->isEnable()) {
+            device->disable();
+        }
+        else {
+            device->enable();
+        }
+    }
+
+    void volumeDown() {
+        device->setVolume(device->getVolume() - 10);
+        cout << device->getVolume() << endl;
+    }
+
+    void volumeUp() {
+        device->setVolume(device->getVolume() + 10);
+        cout << device->getVolume()<<endl;
+    }
+
+    void channelDown() {
+        device->setChannel(device->getChannel() - 1);
+        cout << device->getChannel() << endl;
+    }
+
+    void channelUp() {
+        device->setChannel(device->getChannel() + 1);
+        cout << device->getChannel() << endl;
+        
+    }
+};
+
+class AdvancedRemoteController : public RemoteController {
+public:
+    AdvancedRemoteController(Device* device) : RemoteController(device){}
+    void mute() {
+        device->setVolume(0);
+    }
+};
+
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    Radio* radio1 = new Radio();
+    AdvancedRemoteController rc1(radio1);
+    rc1.togglePower();
+    rc1.togglePower();
+    rc1.togglePower();
+    rc1.volumeUp();
+    rc1.volumeUp();
+    rc1.volumeUp();
+
+}
