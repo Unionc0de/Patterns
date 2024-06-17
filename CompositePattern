@@ -1,0 +1,110 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class FileSystem {
+public:
+    virtual ~FileSystem() = default;
+    virtual void add(FileSystem* component) = 0;
+    virtual void remove(string name) = 0;
+    virtual float getWeight() = 0;
+    virtual void display() = 0;
+};
+
+class File : public FileSystem {
+private:
+    string name;
+    float weight;
+public:
+    File(string name, float weight) :name(name), weight(weight){}
+    
+    float getWeight() {
+        return weight;
+    }
+
+    void remove(string name){
+        throw logic_error("Operation is not supported");
+    }
+
+    void add(FileSystem* component) {
+        throw logic_error("Operation is not supported");
+    }
+
+    void display() {
+        cout << "Name of File: " << name << endl;
+        cout << "Weight of file" << weight << endl;
+    }
+};
+
+class Directory : public FileSystem {
+private:
+    string name;
+    vector<FileSystem*> components;
+public:
+    Directory(string name) :name(name){}
+    ~Directory() {
+        for (auto el : components) {
+            delete el;
+        }
+    }
+    void add(FileSystem* component) {
+        components.push_back(component);
+    }
+
+    void remove(string name) {
+        cout << "Remove" << endl;
+    }
+
+    float getWeight() {
+        float result = 0;
+        for (auto el : components) {
+            result+=el->getWeight();
+        }
+        return result;
+    }
+
+    void display() {
+        cout << "Name of File: " << name << endl;
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    Directory* d1 = new Directory("Galina");
+    File* f1 = new File("f1", 12.3);
+    File* f2 = new File("f2", 99.25);
+    File* f3 = new File("f3", 525.25);
+    d1->add(f1);
+    d1->add(f2);
+    d1->add(f3);
+
+    Directory* d2 = new Directory("Svetlana");
+    File* f4 = new File("f4", 12.3);
+    File* f5 = new File("f5", 90.34);
+    d2->add(f4);
+    d2->add(f5);
+
+    Directory* d3 = new Directory("Anastasiya");
+    File* f6 = new File("f6", 776);
+    File* f7 = new File("f7", 15.23);
+    d3->add(f6);
+    d3->add(f7);
+    d3->add(d1);
+    d3->add(d2);
+
+    Directory* d4 = new Directory("Anastasiya");
+    File* f8 = new File("f8", 34.21);
+    d4->add(f8);
+    d4->add(d3);
+
+    cout << d1->getWeight() << endl;
+    cout << d2->getWeight() << endl;
+    cout << d3->getWeight() << endl;
+    cout << d4->getWeight() << endl;
+    
+}
