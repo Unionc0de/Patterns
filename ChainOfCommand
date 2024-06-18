@@ -1,0 +1,81 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class BaseHandler {
+protected:
+    BaseHandler* next;
+public:
+    BaseHandler():next(nullptr){}
+
+    void setNext(BaseHandler* nextHandler) {
+        this->next = nextHandler;
+    }
+
+    virtual void handleRequest(string request) {
+        if (next) {
+            next->handleRequest(request);
+        }
+        else {
+            cout << "Request: " << request << " is not suported" << endl;
+        }
+    }
+};
+
+class SimpleHandler:public BaseHandler
+{
+public:
+    void handleRequest(string request) {
+        if (request == "simple") {
+            cout << "Request: " << request << " was handled by Simple Hadler" << endl;
+        }
+
+        else {
+            BaseHandler::handleRequest(request);
+        }
+    }
+};
+
+class ComplexHandler :public BaseHandler
+{
+public:
+    void handleRequest(string request) {
+        if (request == "complex") {
+            cout << "Request: " << request << " was handled by Complex Hadler" << endl;
+        }
+
+        else {
+            BaseHandler::handleRequest(request);
+        }
+    }
+};
+
+class HardHandler :public BaseHandler
+{
+public:
+    void handleRequest(string request) {
+        if (request == "hard") {
+            cout << "Request: " << request << " was handled by Hard Hadler" << endl;
+        }
+
+        else {
+            BaseHandler::handleRequest(request);
+        }
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    SimpleHandler* sh1 = new SimpleHandler();
+    ComplexHandler* ch1 = new ComplexHandler();
+    HardHandler* hh1 = new HardHandler();
+
+    sh1->setNext(ch1);
+    ch1->setNext(hh1);
+
+    sh1->handleRequest("Svetlana");
+}
