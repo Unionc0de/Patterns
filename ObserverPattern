@@ -1,0 +1,75 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class Observer {
+public:
+    virtual ~Observer() = default;
+    virtual void update(string context) = 0;
+};
+
+class Subject {
+public:
+    virtual ~Subject() = default;
+    virtual void addObserver(Observer* ob) = 0;
+    virtual void removeObserver(Observer* ob) = 0;
+    virtual void notifyObservers() = 0;
+};
+
+class MagazinePublisher :public Subject {
+private:
+    vector<Observer*> observers;
+    string latestIssue;
+public:
+    void addObserver(Observer* ob) {
+        observers.push_back(ob);
+    }
+
+    void removeObserver(Observer* ob) {
+        observers.erase(remove(observers.begin(), observers.end(), ob), observers.end());
+    }
+
+    void notifyObservers() {
+        for (auto el : observers) {
+            el->update(latestIssue);
+        }
+    }
+
+    void releseNewIssue(string issue) {
+        latestIssue = issue;
+        notifyObservers();
+    }
+};
+
+class Subscriber :public Observer {
+private:
+    string name;
+public:
+    Subscriber(string name):name(name){}
+
+    void update(string magazineIssue) {
+        cout << "Subscriber " << name << " recived new issue " << magazineIssue << endl;
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    Subscriber* svetlana = new Subscriber("Sveta");
+    Subscriber* galina = new Subscriber("Galina");
+    Subscriber* sasha = new Subscriber("Alexandra");
+    Subscriber* elena = new Subscriber("Elena");
+    Subscriber* bebra = new Subscriber("Bebra");
+
+    MagazinePublisher shop1;
+    shop1.addObserver(svetlana);
+    shop1.addObserver(galina);
+    shop1.addObserver(sasha);
+
+    shop1.releseNewIssue("Zhopa vse");
+
+}
