@@ -1,0 +1,82 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+//Посредник — это поведенческий паттерн проектирования, 
+//который позволяет уменьшить связанность множества классов между собой, 
+//благодаря перемещению этих связей в один класс-посредник.
+
+class User;
+class ChatMediator;
+
+class User {
+protected:
+    string name;
+    ChatMediator* mediator;
+public:
+    User(string name,ChatMediator* mediator):name(name),mediator(mediator){}
+    virtual ~User() = default;
+    virtual void send(string message) = 0;
+    virtual void receive(string message) = 0;
+};
+
+class ChatMediator {
+public:
+    virtual ~ChatMediator() = default;
+    virtual void sendMessage(string text,User* user) = 0;
+    virtual void addUser(User* user) = 0;
+};
+
+class ConcreteChatMediator :public ChatMediator {
+private:
+    vector<User*> users;
+public:
+    void addUser(User* user) override {
+        users.push_back(user);
+    }
+
+    void sendMessage(string message, User* user) override {
+        for (User* u : users) {
+            if (u != user) {
+                u->receive(message);
+            }
+        }
+    }
+};
+
+class ConcreteUser :public User {
+public:
+    ConcreteUser(string name, ChatMediator* mediator):User(name,mediator){}
+
+    void send(string message) override{
+        cout << name << " sends: " << message << endl;
+        mediator->sendMessage(message, this);
+    }
+
+    void receive(string message) override {
+        cout << name << " recived " << message << endl;
+
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    ConcreteChatMediator* chat1 = new ConcreteChatMediator();
+
+    User* user1 = new ConcreteUser("Galina",chat1);
+    User* user2 = new ConcreteUser("Svetlana",chat1);
+    User* user3 = new ConcreteUser("Alina",chat1);
+    User* user4 = new ConcreteUser("Babulya",chat1);
+
+    chat1->addUser(user1);
+    chat1->addUser(user2);
+    chat1->addUser(user3);
+    chat1->addUser(user4);
+
+    user1->send("HIHIHIHIHIHIHIHIHIHIHIHI");
+}
