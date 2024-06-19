@@ -1,0 +1,141 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+//Состояние — это поведенческий паттерн проектирования, 
+//который позволяет объектам менять поведение в зависимости от своего состояния.
+//Извне создаётся впечатление, что изменился класс объекта.
+
+class State {
+public:
+    virtual ~State() = default;
+    virtual void play() = 0;
+    virtual void pause() = 0;
+    virtual void stop() = 0;
+};
+
+class MusicPlayer {
+private:
+    State* currentState;
+    State* stoppedState;
+    State* playingState;
+    State* pauseState;
+public:
+    MusicPlayer();
+
+    ~MusicPlayer() {
+        delete stoppedState;
+        delete playingState;
+        delete pauseState;
+    }
+
+    void setState(State* state) {
+        currentState = state;
+    }
+
+    void play() {
+        currentState->play();
+    }
+    
+    void pause() {
+        currentState->pause();
+    }
+    
+    void stop() {
+        currentState->stop();
+    }
+
+    State* getStoppedState() {
+        return this->stoppedState;
+    }
+
+    State* getPlayingState() {
+        return this->playingState;
+
+    }
+
+    State* getPauseState() {
+        return this->pauseState;
+    }
+};
+
+class StoppedState :public  State {
+private:
+    MusicPlayer* player;
+public:
+    StoppedState(MusicPlayer* player):player(player){}
+
+    void play() {
+        cout << "Starting playing by Stopped state" << endl;
+        player->setState(player->getPlayingState());
+    }
+
+    void pause() {
+        cout << "Already paused by Stopped state" << endl;
+    }
+
+    void stop() {
+        cout << "Already stopped by Stopped state" << endl;
+    }
+};
+
+class PausedState:public State{
+private:
+    MusicPlayer* player;
+public:
+    PausedState(MusicPlayer* player) :player(player) {}
+
+    void play() {
+        cout << "Starting playing by Paused state" << endl;
+        player->setState(player->getPlayingState());
+    }
+
+    void pause() {
+        cout << "Already Paused by Paused state" << endl;
+    }
+
+    void stop() {
+        cout << "Stopped by Paused state" << endl;
+        player->setState(player->getStoppedState());
+    }
+};
+
+class PlayingState :public State {
+private:
+    MusicPlayer* player;
+public:
+    PlayingState(MusicPlayer* player) :player(player) {}
+
+    void play() {
+        cout << "Already playing by Playing state" << endl;
+    }
+
+    void pause() {
+        cout << "Paused by Playing state" << endl;
+        player->setState(player->getPauseState());
+    }
+
+    void stop() {
+        cout << "Stopped by Playing state" << endl;
+        player->setState(player->getStoppedState());
+    }
+};
+
+
+MusicPlayer::MusicPlayer() {//Вынесли конструктор так как конструкторы используют друг друга 
+    this->stoppedState = new StoppedState(this);
+    this->playingState = new PlayingState(this);
+    this->pauseState = new PausedState(this);
+    currentState = stoppedState;
+}
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    MusicPlayer player;
+    player.play();
+    player.play();
+}
