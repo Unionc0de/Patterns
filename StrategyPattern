@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+class ShippingCostStrategy {
+public:
+    virtual ~ShippingCostStrategy() = default;
+    virtual double calculateCost(double weight) = 0;
+};
+
+class GroundShipping :public ShippingCostStrategy {
+public:
+    double calculateCost(double weight) {
+        cout << "Shipping by ground transport" << endl;
+        return weight * 1.5;
+    }
+};
+
+class AirShipping :public ShippingCostStrategy {
+public:
+    double calculateCost(double weight) {
+        cout << "Shipping by air transport" << endl;
+        return weight * 3.0;
+    }
+};
+
+class WaterShipping :public ShippingCostStrategy {
+public:
+    double calculateCost(double weight) {
+        cout << "Shipping by water transport" << endl;
+        return weight * 2.0;
+    }
+};
+
+class Order {
+private:
+    ShippingCostStrategy* strategy;
+    double weight;
+public:
+    Order(ShippingCostStrategy* strategy,double weight):strategy(strategy),weight(weight){}
+
+    void setStrategy(ShippingCostStrategy* strategy) {
+        this->strategy = strategy;
+    }
+
+    double calculateCost(double weight) {
+        return strategy->calculateCost(this->weight);
+    }
+
+    void orderShip() {
+        cout << "Your order will be cost " << calculateCost(weight) << "$" << endl;
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    WaterShipping* ws1 = new WaterShipping();
+    Order order(ws1, 12);
+    order.orderShip();
+}
