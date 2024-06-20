@@ -1,0 +1,96 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+//Посетитель — это поведенческий паттерн проектирования, 
+//который позволяет добавлять в программу новые операции, 
+//не изменяя классы объектов, над которыми эти операции могут выполняться.
+
+class HtmlElement;
+class XmlElement;
+
+class Visitor {
+public:
+    virtual ~Visitor() = default;
+    virtual void visit(HtmlElement* element) = 0;
+    virtual void visit(XmlElement* element) = 0;
+};
+
+
+
+class ELement {
+public:
+    virtual ~ELement() = default;
+    virtual void accept(Visitor* visitor) = 0;
+};
+
+class HtmlElement :public ELement {
+public:
+    void accept(Visitor* visitor) {
+        visitor->visit(this);
+    }
+
+    string getHtml() {
+        return "<html><body>Hello Galina!<body><html>";
+    }
+};
+
+
+class XmlElement :public ELement {
+public:
+    void accept(Visitor* visitor) {
+        visitor->visit(this);
+    }
+
+    string getXml() {
+        return "<xml><body>Hello Svetlana!</body></xml>";
+    }
+};
+
+class PrintVisitor : public Visitor {
+public:
+    void visit(HtmlElement* element) {
+        cout << "Getting HTML document: " << element->getHtml() << endl;
+    }
+
+    void visit(XmlElement* element) {
+        cout << "Getting XML document: " << element->getXml() << endl;
+    }
+};
+
+class Documnet {
+private:
+    vector<ELement*>elements;
+public:
+    ~Documnet() {
+        for (auto el : elements) {
+            delete el;
+        }
+    }
+
+    void addElement(ELement* element) {
+        elements.push_back(element);
+    }
+
+    void accept(Visitor* visitor) {
+        for (auto el : elements) {
+            el->accept(visitor);
+        }
+    }
+
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+
+    Documnet doc1;
+    doc1.addElement(new XmlElement());
+    doc1.addElement(new HtmlElement());
+
+    PrintVisitor printVisitor;
+    doc1.accept(&printVisitor);
+}
