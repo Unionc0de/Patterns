@@ -1,0 +1,63 @@
+#include <iostream>
+#include <string>
+#define random(min,max) (min + rand() % (max - min + 1))
+using namespace std;
+
+//Шаблонный метод — это поведенческий паттерн проектирования, 
+//который определяет скелет алгоритма, перекладывая ответственность за некоторые его шаги на подклассы.
+//Паттерн позволяет подклассам переопределять шаги алгоритма, не меняя его общей структуры.
+
+class Coffee {
+public:
+    void prepareRecipe() {
+        boilWater();
+        brewCoffee();
+        pourInCup();
+        addCondimets();
+    }
+protected:
+    void boilWater() {
+        cout << "Boiling some water.." << endl;
+    }
+
+    void pourInCup() {
+        cout << "Pour in cup" << endl;
+    }
+
+    virtual void brewCoffee() = 0;
+    virtual void addCondimets() = 0;
+};
+
+class BlackCoffee:public Coffee {
+protected:
+    void brewCoffee() {
+        cout << "Dripping black coffee" << endl;
+    }
+
+    void addCondimets() {
+        cout << "Nothing to add" << endl;
+    }
+};
+
+class LatteCoffee :public Coffee {
+protected:
+    void brewCoffee() {
+        cout << "Making esspresso" << endl;
+    }
+
+    void addCondimets() {
+        cout << "Add some milk" << endl;
+    }
+};
+
+int main()
+{
+    setlocale(LC_ALL, "rus");
+    srand(time(NULL));
+    Coffee* blackCoffee = new BlackCoffee();
+    Coffee* latte = new LatteCoffee();
+
+    blackCoffee->prepareRecipe();
+    latte->prepareRecipe();
+
+}
