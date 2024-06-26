@@ -4,6 +4,10 @@
 #define random(min,max) (min + rand() % (max - min + 1))
 using namespace std;
 
+//Компоновщик — это структурный паттерн проектирования, 
+//который позволяет сгруппировать множество объектов в древовидную структуру, 
+//а затем работать с ней так, как будто это единичный объект.
+
 class FileSystem {
 public:
     virtual ~FileSystem() = default;
