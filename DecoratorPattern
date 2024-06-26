@@ -3,6 +3,10 @@
 #define random(min,max) (min + rand() % (max - min + 1))
 using namespace std;
 
+//Декоратор — это структурный паттерн проектирования, 
+//который позволяет динамически добавлять объектам новую функциональность, 
+//оборачивая их в полезные «обёртки».
+
 class Notifier {
 public:
     virtual void send(string message) = 0;
